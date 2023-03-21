@@ -9,6 +9,8 @@ dist/
 
 #venv
 venv/
+pipfile
+pipfile.lock
 
 # Compiled Java class files
 *.class
