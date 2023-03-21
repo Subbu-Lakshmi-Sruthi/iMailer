@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dashboard',
     'social_django',        #add this
-
+    'users',
 ]
 
 MIDDLEWARE = [

@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login
 # Create your views here.
 @login_required(login_url='/login')
 def dashboard(request):
-    return render(request, "dashboard/main.html",{})
+    return render(request, "dashboard/dashboard.html",{})
 
 def login_view(request):
     if request.method == 'POST':
