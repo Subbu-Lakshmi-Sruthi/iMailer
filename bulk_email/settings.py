@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'dashboard',
     'social_django',        #add this
     'users',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [

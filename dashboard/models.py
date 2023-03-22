@@ -1,4 +1,5 @@
 from django.db import models
+from ckeditor.fields import RichTextField
 
 
 class Mail(models.Model):
@@ -20,3 +21,6 @@ class Log(models.Model):
 
     def __str__(self):
         return f"{self.mail.mail_from}--{self.mail.mail_to}"
+    
+class Templates(models.Model):
+    body = RichTextField(blank=True , null=True)
