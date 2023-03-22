@@ -11,7 +11,8 @@
             </div>
         </div>
         <!-- /product list -->
-        <form action="/" method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
             <div class="card">
                 <div class="card-body">
                     <div class="profile-set">
@@ -21,7 +22,11 @@
                         <div class="profile-top">
                             <div class="profile-content">
                                 <div class="profile-contentimg" style="background: #fff; padding: 25px;">
+                                    {% if request.user.related_profiles.all %}
+                                    <img src="{{ request.user.related_profiles.first.profile_img.url }}" alt="img" id="blah">
+                                    {% else %}
                                     <img src="{% static 'assets/img/icons/user.png' %}" alt="img" id="blah">
+                                    {% endif %}
                                     <div class="profileupload">
                                         <input type="file" id="imgInp" name="profile_pic">
                                         <a href="javascript:void(0);" style="background: #ddd;" ><img src="{% static 'assets/img/icons/edit-set.svg' %}"  alt="img"></a>
@@ -60,7 +65,7 @@
                             </div>
                         </div>
                         <div class="col-12">
-                            <a href="javascript:void(0);" class="btn btn-submit me-2">Save</a>
+                            <input type="submit" class="btn btn-submit me-2" value="Save"/>
                         </div>
                     </div>
                 </div>

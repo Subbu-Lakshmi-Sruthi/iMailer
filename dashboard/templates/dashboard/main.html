@@ -177,7 +177,7 @@
 					
 					<li class="nav-item dropdown has-arrow main-drop">
 						<a href=" {% static 'javascript:void(0);' %} " class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown" >
-							<span class="user-img"><img src=" {% static 'assets/img/icons/user.png' %} " alt="" style="width: 25px;">
+							<span class="user-img"><img src="{{ request.user.related_profiles.first.profile_img.url }}" alt="" style="width: 25px;">
 							<span class="status online"></span></span>
 						</a>
 						<div class="dropdown-menu menu-drop-user">

@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group, User
 class Profile(models.Model):
     user = models.ForeignKey(User, related_name="related_profiles", on_delete=models.CASCADE)
     mobile = models.CharField(max_length= 15, null=True, blank=True)
-    profile_img = models.ImageField(default="user.png", upload_to="media/")
+    profile_img = models.ImageField(default="user.png", upload_to="profile")
 
     def __str__(self):
         return self.user.email

@@ -10,11 +10,15 @@ def profile(request):
         user.first_name = request.POST["first_name"]
         user.last_name = request.POST["last_name"]
         user.save()
-        if user.related_profiles:
+        if user.related_profiles.all():
             profile = user.related_profiles.first()
             profile.mobile = request.POST["mobile"]
-            profile.profile_img = request.FILES["profile_pic"]
+            if request.FILES.get("profile_pic"):
+                profile.profile_img = request.FILES["profile_pic"]
             profile.save()
         else:
-            Profile.objects.create(user = user, mobile = request.POST["mobile"], profile_img = request.FILES["profile_pic"])
+            if request.FILES.get("profile_pic"):
+                Profile.objects.create(user = user, mobile = request.POST["mobile"], profile_img = request.FILES["profile_pic"])
+            else:
+                Profile.objects.create(user = user, mobile = request.POST["mobile"])
     return render(request, "users/profile.html", {})

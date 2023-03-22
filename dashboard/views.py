@@ -5,8 +5,8 @@ from django.shortcuts import render, HttpResponse , redirect
 
 
 # Create your views here.
-@login_required(login_url="login/")
-@has_profile()
+@login_required(login_url="login")
+@has_profile
 def dashboard(request):
     return render(request, "dashboard/dashboard.html",{})
 
