@@ -1,11 +1,12 @@
 from django.shortcuts import redirect
 
-def has_profile(view_func):
+def init_check(view_func):
     def wrapper_func(request, *args, **kargs):
+        # if not request.user.groups.all():
+        #     return redirect('access_requested')
         if not request.user.related_profiles.all():
-            print("1")
             return redirect('profile')
-        else:
+        else: 
             print(request.user.related_profiles.all())
             return view_func(request, *args, **kargs)
     return wrapper_func

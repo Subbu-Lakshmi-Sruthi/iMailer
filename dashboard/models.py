@@ -1,6 +1,6 @@
 from django.db import models
 from ckeditor.fields import RichTextField
-
+from users.models import *
 
 class Mail(models.Model):
     mail_from=models.EmailField()
@@ -23,4 +23,7 @@ class Log(models.Model):
         return f"{self.mail.mail_from}--{self.mail.mail_to}"
     
 class Templates(models.Model):
+    name = models.CharField(null=True, blank=True, max_length=100)
     body = RichTextField(blank=True , null=True)
+    visibility = models.BooleanField(default=False) # True - Public, False - Private 
+    created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="related_templates", null=True, blank=True)

@@ -1,20 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <div>
-        <h1>templates</h1>
-    <form method="post" action="">
-        {% csrf_token %}
-        {{ form.media }}
-        {{ form.as_p }}
-        <input type="submit" value="Submit">
-    </form>
+{% extends "dashboard/main.html" %}
+{% load static %}
+{% block content %}
+<style>
+    #id_name{
+        width: 230px !important;
+        height: 35px !important;
+        border: 1px solid rgba(145, 158, 171, 0.32) !important;
+    }
+    #id_visibility {
+        width: 25px !important;
+        height: 25px !important;
+    }
+</style>
+<div class="page-wrapper">
+    <div class="content">
+        <h5 class="card-title">Add Templates</h5>
+        <form method="post" action="">
+            {% csrf_token %}
+            {{ form.media }}
+            {{ form.as_p }}
+            <input type="submit" value="Create" class="btn btn-submit me-2">
+        </form>
+    </div>    
 </div>
-</body>
-</html>
+{% endblock %}
