@@ -1,0 +1,145 @@
+{% extends "dashboard/main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+    .no_button{
+        background: none;
+        border: none;
+    }
+</style>
+<div class="page-wrapper">
+    <div class="content">
+        <div class="card-body">
+            <ul class="nav nav-tabs nav-tabs-solid nav-tabs-rounded nav-justified">
+                <li class="nav-item"><a class="nav-link active" href="#solid-rounded-justified-tab1" data-bs-toggle="tab" style="color: #222;" id="compose_btn">Compose</a></li>
+                <li class="nav-item"><a class="nav-link" href="#solid-rounded-justified-tab2" data-bs-toggle="tab" style="color: #222;">Use Templates</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane show active" id="solid-rounded-justified-tab1">
+                    <div class="container" style="margin-top: 20px;">
+                        <form method="post" style="width: 75%;">
+                            {% csrf_token %}
+                            <label for="email_to">To* </label>
+                            <input type="email" name="email_to" id="email_to" class="form-control">
+                            <br>
+                            {{ form.media }}
+                            {{ form|crispy }}
+                            <input type="submit" value="Create" class="btn btn-submit me-2">
+                        </form>
+                    </div>
+                </div>
+                <div class="tab-pane" id="solid-rounded-justified-tab2">
+                    <div class="container" style="margin-top: 20px;">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-top">
+                                    <div class="search-set">
+                                        <div class="search-input">
+                                            <a class="btn btn-searchset"><img src=" {% static 'assets/img/icons/search-white.svg' %} "
+                                                    alt="img"></a>
+                                        </div>
+                                    </div>
+                                    <div class="wordset">
+                                        <ul>
+                                            <li>
+                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img
+                                                        src=" {% static 'assets/img/icons/pdf.svg' %} " alt="img"></a>
+                                            </li>
+                                            <li>
+                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img
+                                                        src=" {% static 'assets/img/icons/excel.svg' %} " alt="img"></a>
+                                            </li>
+                                            <li>
+                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img
+                                                        src=" {% static 'assets/img/icons/printer.svg' %} " alt="img"></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="modal fade" id="myModal" role="dialog">
+                                    <div class="modal-dialog modal-lg">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                                          <h4 class="modal-title">Preview</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                          <p id="modal_content"></p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table  datanew">
+                                        <thead>
+                                            <tr>
+                                                <th>Template Name</th>
+                                                <th>Visibitlity</th>
+                                                <th>Created By</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for template in templates %}
+                                            <tr>
+                                                <td>{{ template.name }}</td>
+                                                {% if template.visibility %}
+                                                <td>Public</td>
+                                                {% else %}
+                                                <td>Private</td>
+                                                {% endif %}
+                                                <td>{{ template.created_by }}</td>
+                                                <td>
+                                                    <div style="display: none;" id="content_{{template.id}}">
+                                                        {{ template.body|safe }}
+                                                    </div>
+                                                    <a class="me-3" onclick="template_populate('{{ template.id }}')">
+                                                        <img src=" {% static 'assets/img/icons/use_this.png' %} " alt="img" style="width: 20px">
+                                                    </a>
+                                                    <button type="button" class="no_button" data-bs-toggle="modal" data-bs-target="#myModal" onclick="content_populate('{{ template.id }}')"><img src=" {% static 'assets/img/icons/eye1.svg' %} " alt="img"></button>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% for template in public_templates %}
+                                            <tr>
+                                                <td>{{ template.name }}</td>
+                                                {% if template.visibility %}
+                                                <td>Public</td>
+                                                {% else %}
+                                                <td>Private</td>
+                                                {% endif %}
+                                                <td>{{ template.created_by }}</td>
+                                                <td>
+                                                    <div style="display: none;" id="content_{{template.id}}">
+                                                        {{ template.body|safe }}
+                                                    </div>
+                                                    <a class="me-3" onclick="template_populate('{{ template.id }}')">
+                                                        <img src=" {% static 'assets/img/icons/use_this.png' %} " alt="img" style="width: 20px">
+                                                    </a>
+                                                    <button type="button" class="no_button" data-bs-toggle="modal" data-bs-target="#myModal" onclick="content_populate('{{ template.id }}')"><img src=" {% static 'assets/img/icons/eye1.svg' %} " alt="img"></button>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+<script>
+    function content_populate(id){
+        document.getElementById("modal_content").innerHTML = document.getElementById(`content_${id}`).innerHTML;
+    }
+    function template_populate(id){
+        var editor = CKEDITOR.instances['id_content'].setData(document.getElementById(`content_${id}`).innerHTML);
+        document.getElementById('compose_btn').click();
+    }
+</script>
+{% endblock %}

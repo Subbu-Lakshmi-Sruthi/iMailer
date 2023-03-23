@@ -6,8 +6,10 @@ urlpatterns = [
     path('', dashboard, name="dashboard"),
     path('add_templates/', add_template_view, name="add_template_view"),
     path('manage_templates/', manage_templates, name="manage_templates"),
-    path('update_view/<int:id>/' , update_view , name="update_view"),
-    path('delete_view/<int:id>/' , delete_view , name="delete_view"),
+    path('update_template/<int:id>/' , update_template , name="update_template"),
+    path('delete_template/<int:id>/' , delete_template , name="delete_template"),
     path('login' , login_view , name="login"),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('send_mail/',send_mail,name="send_mail"),
+    path('send_mail_bulk/',send_mail_bulk,name="send_mail_bulk"),
 ]

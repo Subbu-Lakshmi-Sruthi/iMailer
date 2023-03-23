@@ -5,9 +5,8 @@ from users.models import *
 class Mail(models.Model):
     mail_from=models.EmailField()
     reply_to=models.EmailField()
-    subject=models.TextField()
-    content=models.TextField()
-    is_template=models.BooleanField()
+    subject=models.CharField(null=True, blank=True, max_length=300)
+    content=RichTextField(blank=True , null=True)
     created_by = models.ForeignKey("users.Profile",on_delete=models.SET_NULL,null=True)
 
     def __str__(self) -> str:
@@ -20,7 +19,7 @@ class Log(models.Model):
     status=models.IntegerField(choices=STATUS_CHOICES,default=0)
 
     def __str__(self):
-        return f"{self.mail.mail_from}--{self.mail.mail_to}"
+        return f"{self.mail.mail_from}--{self.mail_to}"
     
 class Templates(models.Model):
     name = models.CharField(null=True, blank=True, max_length=100)

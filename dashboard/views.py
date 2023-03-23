@@ -2,8 +2,9 @@ from users.decorators import init_check
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, HttpResponse , redirect
-from .forms import TemplateForm
-from .models import Templates
+from .forms import *
+from .models import *
+import json
 
 # Create your views here.
 @login_required(login_url="login")
@@ -27,7 +28,6 @@ def add_template_view(request):
     if request.method == 'POST':
         body = request.POST['body']
         if body is not '' :
-            print(body)
             visible = False
             if request.POST.get("visibility") == "on":
                 visible = True
@@ -52,7 +52,7 @@ def manage_templates(request):
 
 @login_required(login_url='/login')
 @init_check
-def update_view(request , id):
+def update_template(request , id):
     templates = Templates.objects.get(id=id)
     form = TemplateForm(request.POST or None,instance=templates)
     if form.is_valid():
@@ -63,7 +63,43 @@ def update_view(request , id):
 
 @login_required(login_url='/login')
 @init_check
-def delete_view(request , id):
+def delete_template(request , id):
     template = Templates.objects.get(id=id)
     template.delete()
     return redirect('manage_templates')
+
+@login_required(login_url='/login')
+@init_check
+def send_mail(request):
+    templates = Templates.objects.filter(created_by = request.user.related_profiles.first())
+    public_templates = Templates.objects.filter(visibility = True).exclude(created_by = request.user.related_profiles.first())
+    if request.method == "POST":
+        form = MailForm(request.POST)
+        if form.is_valid():
+            obj = form.save()
+            obj.created_by = request.user.related_profiles.first()
+            obj.save()
+            Log.objects.create(mail = obj, mail_to = request.POST["email_to"], status = 0)
+            #Queue in Kafka Logic
+    form = MailForm()
+    return render(request, "dashboard/sendmail_ind.html", {"send_mail_active":True, "form":form, 'templates' : templates,
+        'public_templates': public_templates,})
+
+@login_required(login_url='/login')
+@init_check
+def send_mail_bulk(request):
+    templates = Templates.objects.filter(created_by = request.user.related_profiles.first())
+    public_templates = Templates.objects.filter(visibility = True).exclude(created_by = request.user.related_profiles.first())
+    if request.method == "POST":
+        form = MailForm(request.POST)
+        if form.is_valid():
+            obj = form.save()
+            obj.created_by = request.user.related_profiles.first()
+            obj.save()
+            recipient_list = json.loads(request.POST["recipient_list"])
+            for li in range(0,recipient_list["length"]):
+                Log.objects.create(mail_to = recipient_list[str(li)]["email"], mail = obj, status = 0)
+                #Queue in Kafka Logic
+    form = MailForm()
+    return render(request, "dashboard/sendmail_bulk.html",{"send_mail_bulk_active": True, "form":form, 'templates' : templates,
+        'public_templates': public_templates,})
