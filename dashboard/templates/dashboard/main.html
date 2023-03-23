@@ -15,6 +15,8 @@
 		
 		<!-- Bootstrap CSS -->
 		<link rel="stylesheet" href=" {% static 'assets/css/bootstrap.min.css' %} ">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 		
 		<!-- animation CSS -->
 		<link rel="stylesheet" href=" {% static 'assets/css/animate.css' %} ">
@@ -177,7 +179,11 @@
 					
 					<li class="nav-item dropdown has-arrow main-drop">
 						<a href=" {% static 'javascript:void(0);' %} " class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown" >
+							{% if request.user.related_profiles.all %}
 							<span class="user-img"><img src="{{ request.user.related_profiles.first.profile_img.url }}" alt="" style="width: 25px;">
+							{% else %}
+							<span class="user-img"><img src="{% static 'assets/img/icons/user.png' %}" alt="" style="width: 25px;">
+							{% endif %}
 							<span class="status online"></span></span>
 						</a>
 						<div class="dropdown-menu menu-drop-user">
@@ -232,8 +238,8 @@
 							<li class="submenu">
 								<a><img src=" {% static 'assets/img/icons/sales1.svg' %} " alt="img"><span> Send Mail</span> <span class="menu-arrow"></span></a>
 								<ul>
-									<li><a href="#">Send Individual Mail</a></li>
-									<li><a href="#">Send Bulk Mail</a></li>
+									<li><a href="{% url 'send_mail' %}"  {% if send_mail_active %} class="active" {% endif %}>Send Individual Mail</a></li>
+									<li><a href="{% url 'send_mail_bulk' %}" {% if send_mail_bulk_active %} class="active" {% endif %}>Send Bulk Mail</a></li>
 									<li><a href="#">View Logs</a></li>
 									<li><a href="#">View Notification</a></li>
 								</ul>

@@ -7,6 +7,5 @@ def init_check(view_func):
         if not request.user.related_profiles.all():
             return redirect('profile')
         else: 
-            print(request.user.related_profiles.all())
             return view_func(request, *args, **kargs)
     return wrapper_func

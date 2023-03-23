@@ -75,10 +75,10 @@
                                 {% endif %}
                                 <td>{{ template.created_by }}</td>
                                 <td>
-                                    <a class="me-3" href="{% url 'update_view' template.id %}">
+                                    <a class="me-3" href="{% url 'update_template' template.id %}">
                                         <img src=" {% static 'assets/img/icons/edit.svg' %} " alt="img">
                                     </a>
-                                    <a class="confirm-text" href="{% url 'delete_view' template.id %}">
+                                    <a class="confirm-text" href="{% url 'delete_template' template.id %}">
                                         <img src=" {% static 'assets/img/icons/delete.svg' %} " alt="img">
                                     </a>
                                 </td>
@@ -100,10 +100,10 @@
                                 {% endif %}
                                 <td>{{ template.created_by }}</td>
                                 <td>
-                                    <a class="me-3" href="{% url 'update_view' template.id %}">
+                                    <a class="me-3" href="{% url 'update_template' template.id %}">
                                         <img src=" {% static 'assets/img/icons/edit.svg' %} " alt="img">
                                     </a>
-                                    <a class="confirm-text" href="{% url 'delete_view' template.id %}">
+                                    <a class="confirm-text" href="{% url 'delete_template' template.id %}">
                                         <img src=" {% static 'assets/img/icons/delete.svg' %} " alt="img">
                                     </a>
                                 </td>
