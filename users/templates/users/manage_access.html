@@ -1,0 +1,110 @@
+{% extends "dashboard/main.html" %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content">
+
+        <div class="page-title">
+            <h4>Users</h4>
+            <h6>Manage your Users</h6>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-top">
+                    <div class="search-set">
+                        <div class="search-input">
+                            <a class="btn btn-searchset"><img src=" {% static 'assets/img/icons/search-white.svg' %} "
+                                    alt="img"></a>
+                        </div>
+                    </div>
+                    <div class="wordset">
+                        <ul>
+                            <li>
+                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img
+                                        src=" {% static 'assets/img/icons/pdf.svg' %} " alt="img"></a>
+                            </li>
+                            <li>
+                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img
+                                        src=" {% static 'assets/img/icons/excel.svg' %} " alt="img"></a>
+                            </li>
+                            <li>
+                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img
+                                        src=" {% static 'assets/img/icons/printer.svg' %} " alt="img"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table  datanew" id="table1">
+                        <thead>
+                            <tr>
+                                <th> E mail</th>
+                                <th>First name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody> 
+                        
+                        {% for user in users %}
+                            <tr>
+                            <td>{{user.email}}</td>
+                             <td>{{user.first_name}}</td>
+                             <td><select class="form-control">
+                                <option>Select</option>
+                                {% for i in groups %}
+                                <option value="{{i.name}}">{{i.name}}</option>
+                                {% endfor  %}
+                              </select></td>
+                            </tr>
+                            {% endfor%}
+                        </tbody>
+                    </table>
+                </div>
+                <button class="btn btn-primary" onclick="submit()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function submit(){
+        var data = {};
+        var t = $("#table1").DataTable();
+        console.log(t.rows().data())
+        // Get the table data
+        // const tableRows = document.querySelectorAll('table tbody tr');
+        // const data = [];
+
+        // tableRows.forEach((row) => {
+        // const rowData = {};
+        // const cells = row.querySelectorAll('td');
+        // cells.forEach((cell, index) => {
+        //     rowData[`column${index}`] = cell.textContent.trim();
+        // });
+        // data.push(rowData);
+        // });
+
+        console.log(data)
+        // Create a JSON object
+        const postData = JSON.stringify(data);
+
+        // Send the POST request
+        fetch('/users/manage-access', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: postData
+        })
+        .then(response => {
+            console.log(response);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+
+}
+
+
+</script>
+{% endblock %}
