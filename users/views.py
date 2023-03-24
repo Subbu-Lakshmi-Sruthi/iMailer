@@ -55,8 +55,13 @@ def add_group(request):
 def manage_access(request):
     
     if request.method == 'POST':
-        a = json.loads(request.POST)
-        print(a)
+        a = json.loads(request.body)
+        for i in range(0, a["length"]):
+            user = User.objects.get(email = a[str(i)]["email"])
+            group = Group.objects.filter(name=a[str(i)]["group"])
+            user.groups.add(group[0])
+            return redirect('manage_access')
+          
     users = User.objects.all()
     groups = Group.objects.all()
     a = []
