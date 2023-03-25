@@ -47,13 +47,12 @@ def add_group(request):
     context = {
         'permissions' : permissions,    
     }
-    return render(request , 'users/add_group.html' , context)
+    return render(request , 'groups/add_group.html' , context)
 
 
 @login_required(login_url="login/")
 @csrf_exempt
 def manage_access(request):
-    
     if request.method == 'POST':
         a = json.loads(request.body)
         for i in range(0, a["length"]):
@@ -75,3 +74,78 @@ def manage_access(request):
         'groups': groups,
     }
     return render(request , 'users/manage_access.html' , context)
+
+
+@login_required(login_url="login/")
+def manage_permission(request):    
+    accesses = Access.objects.all()
+    context = {
+        'accesses':accesses
+    }
+    return render(request , 'groups/manage_perm.html' , context)
+
+
+@login_required(login_url="login/")
+def manage_pre_update(request , id):
+    if request.method == "POST":
+        permissions = request.POST.getlist('permissions')
+        print(permissions)
+        separator = ', '
+        my_string = separator.join(permissions)
+        acc = Access.objects.get(id = id)
+        acc.menu = my_string
+        acc.save()
+        return redirect('manage_permission')   
+    
+    access = Access.objects.get(id = id)
+    permissions = ['Dashboard' , 'Manage Templates' , 'Send Mail' , 'Manage Users' , 'Import Users' , 'Manage Groups']
+    a = access.menu
+    arr = a.split(", ")
+    context = {
+        'name': access.group.name,
+        'menu': arr,
+        'permissions' : permissions,    
+    }
+    return render(request , 'groups/update_group.html' , context)
+
+
+@login_required(login_url="login/")
+def manage_pre_delete(request , id):
+    acc = Access.objects.get(id = id)
+    grp = Group.objects.get(name = acc.group.name)
+    grp.delete()
+    acc.delete()
+    return redirect('manage_permission')
+
+
+
+@login_required(login_url="login/")
+@csrf_exempt
+def manage_user_permission(request):
+    if request.method == 'POST':
+        a = json.loads(request.body)
+        for i in range(0, a["length"]):
+            user = User.objects.get(email = a[str(i)]["email"])
+            group = Group.objects.filter(name=a[str(i)]["group"])
+            current_group = user.groups.first()
+            user.groups.remove(current_group)
+            user.groups.add(group[0])
+            return redirect('manage_access')
+        
+    users = User.objects.all()
+    groups = Group.objects.all()
+    
+    a = []
+    for user in users:
+        if user.groups.exists():
+            a.append(user)
+            print(user.groups.name)
+ 
+    context = {
+        'users' : a ,
+        'groups': groups,
+    }
+    return render(request , 'users/update_access.html' , context)
+    
+
+

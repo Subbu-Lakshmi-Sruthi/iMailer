@@ -17,13 +17,13 @@
             {% csrf_token %}
             <label>Group Name : </label>
             <br>
-            <input type="text" name="groupName">
+            <input type="text" name="groupName" value="{{ name }}">
             <br>
             <br>
-            <label>Permissions Given : </label>
+            <label>Permissions : </label>
             <select multiple="multiple" name="permissions" class="form-control tagging">
                 {% for i in permissions %}
-                <option value="{{i}}">{{i}}</option>
+                <option value="{{i}}" {% for m in menu %} {% if m == i %} selected {% endif %} {% endfor %}>{{i}}</option>
                 {% endfor  %}
               </select>
               <br>
