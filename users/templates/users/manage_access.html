@@ -1,0 +1,139 @@
+{% extends "dashboard/main.html" %} {% load static %} {% block content %}
+<div class="page-wrapper">
+  <div class="content">
+    <div class="page-title">
+      <h4>Users</h4>
+      <h6>Manage your Users</h6>
+    </div>
+<div id="temp_div" style="display: none;">
+
+</div>
+    <div class="card">
+      <div class="card-body">
+        <div class="table-top">
+          <div class="search-set">
+            <div class="search-input">
+              <a class="btn btn-searchset"
+                ><img
+                  src=" {% static 'assets/img/icons/search-white.svg' %} "
+                  alt="img"
+              /></a>
+            </div>
+          </div>
+          <div class="wordset">
+            <ul>
+              <li>
+                <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"
+                  ><img
+                    src=" {% static 'assets/img/icons/pdf.svg' %} "
+                    alt="img"
+                /></a>
+              </li>
+              <li>
+                <a
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="excel"
+                  ><img
+                    src=" {% static 'assets/img/icons/excel.svg' %} "
+                    alt="img"
+                /></a>
+              </li>
+              <li>
+                <a
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="print"
+                  ><img
+                    src=" {% static 'assets/img/icons/printer.svg' %} "
+                    alt="img"
+                /></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table datanew" id="table1">
+            <thead>
+              <tr>
+                <th>E mail</th>
+                <th>First name</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for user in users %}
+              <tr>
+                <td>{{user.email}}</td>
+                <td>{{user.first_name}}</td>
+                <td>
+                  <select>
+                    <option value="">---  ---</option>
+                    {% for i in groups %}
+                    <option value="{{i.name}}">{{i.name}}</option>
+                    {% endfor %}
+                  </select>
+                </td>
+              </tr>
+              {% endfor%}
+            </tbody>
+          </table>
+        </div>
+        <button class="btn btn-primary" onclick="submit()">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+
+      const selectElements = document.querySelectorAll('select');
+
+      // Loop through each select element and assign a unique id
+      for (let i = 0; i < selectElements.length; i++) {
+        selectElements[i].setAttribute('id', `select-${i+1}`);
+      }
+
+
+  function submit() {
+    var final_json = {};
+    var t = $("#table1").DataTable();
+    var item = {};
+    var a = 0
+    for (var i = 0; i < t.rows().data().length; i++) {
+      item["email"] = t.rows().data()[i][0];
+      var select = t.rows().data()[i][2]; 
+      document.querySelector("#temp_div").innerHTML = select;
+      var select_id = document.querySelector("#temp_div select").id;
+      document.querySelector("#temp_div").innerHTML = "";
+      item['group'] = document.getElementById(select_id).value
+      if (item["group"] != '' ){
+        final_json[a] = item;
+        a++;
+      } 
+      item = {};
+    }
+    final_json["length"] = a;
+
+    console.log(final_json);
+    // Create a JSON object
+    let postData = JSON.stringify(final_json);
+    console.log(postData);
+    // Send the POST request
+    fetch("/users/manage-access", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: postData,
+    })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+      window.location.reload();
+  }
+</script>
+{% endblock %}

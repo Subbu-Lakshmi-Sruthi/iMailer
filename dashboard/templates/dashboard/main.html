@@ -249,7 +249,7 @@
 								<ul>
 									<li><a href="#">Create User</a></li>
 									<li><a href="#">Manage Permission</a></li>
-									<li><a href="#">Manage Access Requests</a></li>
+									<li><a href="{% url 'manage_access'%}">Manage Access Requests</a></li>
 								</ul>
 							</li>
 							<li class="submenu">
@@ -261,7 +261,7 @@
 							<li class="submenu">
 								<a><img src=" {% static 'assets/img/icons/quotation1.svg' %} " alt="img"><span> Manage Groups</span> <span class="menu-arrow"></span></a>
 								<ul>
-									<li><a href="#">Create Groups</a></li>
+									<li><a href="{% url 'add_group'%}">Create Groups</a></li>
 									<li><a href="#">Manage Permission</a></li>
 									<li><a href="#">Assign User groups</a></li>
 								</ul>
