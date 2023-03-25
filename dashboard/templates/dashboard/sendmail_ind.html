@@ -141,5 +141,17 @@
         var editor = CKEDITOR.instances['id_content'].setData(document.getElementById(`content_${id}`).innerHTML);
         document.getElementById('compose_btn').click();
     }
+$('#email_to').on('input', function() {
+  $('#email_to').mailcheck({
+    suggested: function(element, suggestion) {
+      // callback code
+      console.log(suggestion)
+    },
+    empty: function(element) {
+      // callback code
+    }
+  });
+});
+</script>
 </script>
 {% endblock %}

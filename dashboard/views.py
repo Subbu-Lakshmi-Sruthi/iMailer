@@ -103,3 +103,13 @@ def send_mail_bulk(request):
     form = MailForm()
     return render(request, "dashboard/sendmail_bulk.html",{"send_mail_bulk_active": True, "form":form, 'templates' : templates,
         'public_templates': public_templates,})
+
+@login_required(login_url='/login')
+@init_check
+def logs(request):
+    logs = Log.objects.filter(mail__created_by = request.user.related_profiles.first())
+    context = {
+        "logs_active": True,
+        "logs":logs
+    }
+    return render(request, "dashboard/logs.html", context)

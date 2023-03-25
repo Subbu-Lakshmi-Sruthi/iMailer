@@ -1,0 +1,81 @@
+{% extends "dashboard/main.html" %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content">
+        <div class="page-header">
+            <div class="page-title">
+                <h4>Logs List</h4>
+            </div>
+        </div>
+
+
+        <!-- /product list -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-top">
+                    <div class="search-set">
+                        <div class="search-input">
+                            <a class="btn btn-searchset"><img src=" {% static 'assets/img/icons/search-white.svg' %} "
+                                    alt="img"></a>
+                        </div>
+                    </div>
+                    <div class="wordset">
+                        <ul>
+                            <li>
+                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img
+                                        src=" {% static 'assets/img/icons/pdf.svg' %} " alt="img"></a>
+                            </li>
+                            <li>
+                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img
+                                        src=" {% static 'assets/img/icons/excel.svg' %} " alt="img"></a>
+                            </li>
+                            <li>
+                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img
+                                        src=" {% static 'assets/img/icons/printer.svg' %} " alt="img"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table  datanew">
+                        <thead>
+                            <tr>
+                                <th>To</th>
+                                <th>From</th>
+                                <th>Subject</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                                <th>Created At</th>
+                                <th>Sent At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in logs %}
+                            <tr>
+                                <td>{{ log.mail_to }}</td>
+                                <td>{{ log.mail.mail_from }}</td>
+                                <td>{{ log.mail.subject }}</td>
+                                <td>{{ log.get_status_display }}</td>
+                                <td>
+                                    {% if log.status == 0 %}
+                                    <a href="#" title="Refresh"><img src="{% static 'assets/img/icons/refresh.png' %}" alt=""></a>
+                                    {% elif log.status == 3 %}
+                                    <a href="#" title="Try Again"><img src="{% static 'assets/img/icons/repost.png' %}" alt="" style="width: 26px;"></a>
+                                    {% else %}
+                                    <p>N/A</p>
+                                    {% endif %}
+                                </td>
+                                <td>{{ log.mail.created_at }}</td>
+                                <td>{{ log.sent_at }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /product list -->
+    </div>
+</div>
+{% endblock %}
