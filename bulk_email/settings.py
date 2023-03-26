@@ -39,11 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'dashboard',
-    'social_django',        #add this
     'users',
+    'social_django',        #add this
     'ckeditor',
     'crispy_forms',
     'crispy_bootstrap5',
+    'corsheaders',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
