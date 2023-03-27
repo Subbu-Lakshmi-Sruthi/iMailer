@@ -10,6 +10,12 @@ import json
 @login_required(login_url="login")
 @init_check
 def dashboard(request):
+    curr_user = request.user
+    curr_user_group= curr_user.groups.all()
+    curr_user_permissions = Access.objects.get(group = curr_user_group[0].id)
+    if 'Dashboard' not in curr_user_permissions.menu : 
+        return HttpResponse('you are not authorized here')
+    
     return render(request, "dashboard/dashboard.html",{"dashboard_active":True})
 
 def login_view(request):
@@ -25,6 +31,12 @@ def login_view(request):
 @login_required(login_url='/login')
 @init_check
 def add_template_view(request):
+    curr_user = request.user
+    curr_user_group= curr_user.groups.all()
+    curr_user_permissions = Access.objects.get(group = curr_user_group[0].id)
+    if 'Manage Templates' not in curr_user_permissions.menu : 
+        return HttpResponse('you are not authorized here')
+    
     if request.method == 'POST':
         body = request.POST['body']
         if body is not '' :
@@ -40,6 +52,12 @@ def add_template_view(request):
 @login_required(login_url='/login')
 @init_check
 def manage_templates(request):
+    curr_user = request.user
+    curr_user_group= curr_user.groups.all()
+    curr_user_permissions = Access.objects.get(group = curr_user_group[0].id)
+    if 'Manage Templates' not in curr_user_permissions.menu : 
+        return HttpResponse('you are not authorized here')
+    
     templates = Templates.objects.filter(created_by = request.user.related_profiles.first())
     public_templates = Templates.objects.filter(visibility = True).exclude(created_by = request.user.related_profiles.first())
     context = {
@@ -53,6 +71,12 @@ def manage_templates(request):
 @login_required(login_url='/login')
 @init_check
 def update_template(request , id):
+    curr_user = request.user
+    curr_user_group= curr_user.groups.all()
+    curr_user_permissions = Access.objects.get(group = curr_user_group[0].id)
+    if 'Manage Templates' not in curr_user_permissions.menu : 
+        return HttpResponse('you are not authorized here')
+    
     templates = Templates.objects.get(id=id)
     form = TemplateForm(request.POST or None,instance=templates)
     if form.is_valid():
@@ -64,6 +88,12 @@ def update_template(request , id):
 @login_required(login_url='/login')
 @init_check
 def delete_template(request , id):
+    curr_user = request.user
+    curr_user_group= curr_user.groups.all()
+    curr_user_permissions = Access.objects.get(group = curr_user_group[0].id)
+    if 'Manage Templates' not in curr_user_permissions.menu : 
+        return HttpResponse('you are not authorized here')
+    
     template = Templates.objects.get(id=id)
     template.delete()
     return redirect('manage_templates')
@@ -71,6 +101,13 @@ def delete_template(request , id):
 @login_required(login_url='/login')
 @init_check
 def send_mail(request):
+    curr_user = request.user
+    curr_user_group= curr_user.groups.all()
+    curr_user_permissions = Access.objects.get(group = curr_user_group[0].id)
+    if 'Send Mail' not in curr_user_permissions.menu : 
+        return HttpResponse('you are not authorized here')
+    
+    
     templates = Templates.objects.filter(created_by = request.user.related_profiles.first())
     public_templates = Templates.objects.filter(visibility = True).exclude(created_by = request.user.related_profiles.first())
     if request.method == "POST":
@@ -88,6 +125,12 @@ def send_mail(request):
 @login_required(login_url='/login')
 @init_check
 def send_mail_bulk(request):
+    curr_user = request.user
+    curr_user_group= curr_user.groups.all()
+    curr_user_permissions = Access.objects.get(group = curr_user_group[0].id)
+    if 'Send Mail' not in curr_user_permissions.menu : 
+        return HttpResponse('you are not authorized here')
+    
     templates = Templates.objects.filter(created_by = request.user.related_profiles.first())
     public_templates = Templates.objects.filter(visibility = True).exclude(created_by = request.user.related_profiles.first())
     if request.method == "POST":

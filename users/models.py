@@ -12,7 +12,7 @@ class Profile(models.Model):
     
 class Access(models.Model):
     group = models.ForeignKey(Group, related_name="related_access", on_delete=models.CASCADE)
-    menu = models.CharField(max_length=30,null=True, blank=True)
+    menu = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.group.name

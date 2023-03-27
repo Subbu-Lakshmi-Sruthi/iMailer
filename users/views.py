@@ -6,9 +6,12 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from users.decorators import init_check, init_check_access , init_check_profile
+
 
 # Create your views here.
 @login_required(login_url="login/")
+@init_check_profile
 def profile(request):
     if request.method == "POST":
         user = request.user
@@ -30,7 +33,14 @@ def profile(request):
 
 
 @login_required(login_url="login/")
+@init_check
 def add_group(request):
+    curr_user = request.user
+    curr_user_group= curr_user.groups.all()
+    curr_user_permissions = Access.objects.get(group = curr_user_group[0].id)
+    if 'Manage Groups' not in curr_user_permissions.menu : 
+        return HttpResponse('you are not authorized here')
+    
     if request.method == "POST":
         groupName = request.POST['groupName']
         permissions = request.POST.getlist('permissions')
@@ -47,12 +57,120 @@ def add_group(request):
     context = {
         'permissions' : permissions,    
     }
-    return render(request , 'users/add_group.html' , context)
+    return render(request , 'groups/add_group.html' , context)
+
+@login_required(login_url="login/")
+@init_check
+def manage_permission(request):    
+    curr_user = request.user
+    curr_user_group= curr_user.groups.all()
+    curr_user_permissions = Access.objects.get(group = curr_user_group[0].id)
+    if 'Manage Groups' not in curr_user_permissions.menu : 
+        return HttpResponse('you are not authorized here')
+    
+    accesses = Access.objects.all()
+    context = {
+        'accesses':accesses
+    }
+    return render(request , 'groups/manage_perm.html' , context)
+
+
+@login_required(login_url="login/")
+@init_check
+def manage_pre_update(request , id):
+    curr_user = request.user
+    curr_user_group= curr_user.groups.all()
+    curr_user_permissions = Access.objects.get(group = curr_user_group[0].id)
+    if 'Manage Groups' not in curr_user_permissions.menu : 
+        return HttpResponse('you are not authorized here')
+    
+    if request.method == "POST":
+        permissions = request.POST.getlist('permissions')
+        print(permissions)
+        separator = ', '
+        my_string = separator.join(permissions)
+        acc = Access.objects.get(id = id)
+        acc.menu = my_string
+        acc.save()
+        return redirect('manage_permission')   
+    
+    access = Access.objects.get(id = id)
+    permissions = ['Dashboard' , 'Manage Templates' , 'Send Mail' , 'Manage Users' , 'Import Users' , 'Manage Groups']
+    a = access.menu
+    arr = a.split(", ")
+    context = {
+        'name': access.group.name,
+        'menu': arr,
+        'permissions' : permissions,    
+    }
+    return render(request , 'groups/update_group.html' , context)
+
+
+@login_required(login_url="login/")
+@init_check
+def manage_pre_delete(request , id):
+    curr_user = request.user
+    curr_user_group= curr_user.groups.all()
+    curr_user_permissions = Access.objects.get(group = curr_user_group[0].id)
+    if 'Manage Groups' not in curr_user_permissions.menu : 
+        return HttpResponse('you are not authorized here')
+    
+    acc = Access.objects.get(id = id)
+    grp = Group.objects.get(name = acc.group.name)
+    grp.delete()
+    acc.delete()
+    return redirect('manage_permission')
+
+
+
+@login_required(login_url="login/")
+@csrf_exempt
+@init_check
+def manage_user_permission(request):
+    curr_user = request.user
+    curr_user_group= curr_user.groups.all()
+    curr_user_permissions = Access.objects.get(group = curr_user_group[0].id)
+    if 'Manage Users' not in curr_user_permissions.menu : 
+        return HttpResponse('you are not authorized here')
+    
+    if request.method == 'POST':
+        a = json.loads(request.body)
+        for i in range(0, a["length"]):
+            user = User.objects.get(email = a[str(i)]["email"])
+            group = Group.objects.filter(name=a[str(i)]["group"])
+            current_group = user.groups.first()
+            user.groups.remove(current_group)
+            user.groups.add(group[0])
+            return redirect('manage_access')
+        
+    users = User.objects.all()
+    groups = Group.objects.all()
+    
+    a = []
+    for user in users:
+        if user.groups.exists():
+            a.append(user)
+            print(user.groups.name)
+ 
+    context = {
+        'users' : a ,
+        'groups': groups,
+    }
+    return render(request , 'users/update_access.html' , context)
 
 
 @login_required(login_url="login/")
 @csrf_exempt
 def manage_access(request):
+    curr_user = request.user
+    if not curr_user.groups.exists():
+        return HttpResponse('Wait till we authorize you .')
+    if not request.user.related_profiles.all():
+        return redirect('profile')
+    curr_user_group= curr_user.groups.all()
+    curr_user_permissions = Access.objects.get(group = curr_user_group[0].id)
+    if 'Manage Users' not in curr_user_permissions.menu : 
+        return HttpResponse('you are not authorized here')
     
     if request.method == 'POST':
         a = json.loads(request.body)
@@ -75,3 +193,6 @@ def manage_access(request):
         'groups': groups,
     }
     return render(request , 'users/manage_access.html' , context)
+    
+
+
