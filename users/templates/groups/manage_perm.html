@@ -1,18 +1,14 @@
 {% extends "dashboard/main.html" %}
 {% load static %}
 {% block content %}
-<div class="page-wrapper">
-    <div class="content">
-        <h1>Group CRUD</h1>
-        <br>
-        <br>
-        {% for access in accesses %}
-            <h4>group name : {{access.group}}</h4>  
-            <h5>permissions : {{access.menu}}</h5>
-            <a href="{% url 'manage_pre_delete' access.id %}"><button>Delete</button></a>
-            <a href="{% url 'manage_pre_update' access.id %}"><button>Edit</button></a>
-            <hr>
-        {% endfor %}
-    </div>
-</div>
+<h1>Group CRUD</h1>
+<br>
+<br>
+{% for access in accesses %}
+    <h4>group name : {{access.group}}</h4>  
+    <h5>permissions : {{access.menu}}</h5>
+    <a href="{% url 'manage_pre_delete' access.id %}"><button>Delete</button></a>
+    <a href="{% url 'manage_pre_update' access.id %}"><button>Edit</button></a>
+    <hr>
+{% endfor %}
 {% endblock %}

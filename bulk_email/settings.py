@@ -157,3 +157,24 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '931578641864-151vduh88600ote12inpjl0oem4bn80l.a
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+#local smtp
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'lonelydeveloper2003@gmail.com'
+EMAIL_HOST_PASSWORD = 'ggkuuvmiewprnlpk'
+
+
+#whatsapp 
+WHATSAPP_API_URL = "https://graph.facebook.com/v16.0/109703642008823/messages"
+WHATSAPP_API_TOKEN = "EAAKYFMRlQSoBAJ1m9uy6NkipZARezfzSq29ZB8JFQdwQ4P1GjRiKKBZB8ugqvaApqwhZADBsba8rMBP4zs0TxSlhEFizhW21kY7mTFYOZCCmFPSXlZB0cG394QZCPaZABGDDxQwVA9b9MiRfwpvFZCtrrjZCjVy5eTASbtGKa7wVIw0laJfU6vj3aqcxF4OZCbWcBtlvspm7xrNFV3MsSO0doPv8OdkkYbB9W0ZD"
+WHATSAPP_HEADERS = {
+    'Authorization': F'Bearer {WHATSAPP_API_TOKEN}',
+    'Content-Type': 'application/json'
+}
+
+#celery 
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_TRANSPORT = 'redis'

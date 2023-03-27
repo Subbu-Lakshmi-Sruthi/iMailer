@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import render, HttpResponse , redirect
 from .forms import *
 from .models import *
+from django.contrib import messages
+from .tasks import send_mail_task
 import json
 
 # Create your views here.
@@ -115,9 +117,13 @@ def send_mail(request):
         if form.is_valid():
             obj = form.save()
             obj.created_by = request.user.related_profiles.first()
+            obj.mail_from = "lonelydeveloper2003@gmail.com"
+            send_mail_task.delay(obj.subject,obj.content,request.POST["email_to"],obj.reply_to)
             obj.save()
+            messages.info(request,"Mail Sent")
             Log.objects.create(mail = obj, mail_to = request.POST["email_to"], status = 0)
             #Queue in Kafka Logic
+            
     form = MailForm()
     return render(request, "dashboard/sendmail_ind.html", {"send_mail_active":True, "form":form, 'templates' : templates,
         'public_templates': public_templates,})

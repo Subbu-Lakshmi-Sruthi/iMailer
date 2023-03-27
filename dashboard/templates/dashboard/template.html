@@ -2,25 +2,23 @@
 {% load static %}
 {% block content %}
 <style>
-    #id_name{
+    #id_name {
         width: 230px !important;
         height: 35px !important;
         border: 1px solid rgba(145, 158, 171, 0.32) !important;
     }
+
     #id_visibility {
         width: 25px !important;
         height: 25px !important;
     }
 </style>
-<div class="page-wrapper">
-    <div class="content">
-        <h5 class="card-title">Add Templates</h5>
-        <form method="post" action="">
-            {% csrf_token %}
-            {{ form.media }}
-            {{ form.as_p }}
-            <input type="submit" value="Create" class="btn btn-submit me-2">
-        </form>
-    </div>    
-</div>
+<h5 class="card-title">Add Templates</h5>
+<form method="post" action="">
+    {% csrf_token %}
+    {{ form.media }}
+    {{ form.as_p }}
+    <input type="submit" value="Create" class="btn btn-submit me-2">
+</form>
+
 {% endblock %}
