@@ -3,7 +3,7 @@ from ckeditor.fields import RichTextField
 from users.models import *
 
 class Mail(models.Model):
-    mail_from=models.EmailField()
+    mail_from=models.EmailField(null=True,blank=True)
     reply_to=models.EmailField()
     subject=models.CharField(null=True, blank=True, max_length=300)
     content=RichTextField(blank=True , null=True)
@@ -29,3 +29,7 @@ class Templates(models.Model):
     body = RichTextField(blank=True , null=True)
     visibility = models.BooleanField(default=False) # True - Public, False - Private 
     created_by = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="related_templates", null=True, blank=True)
+
+class Config(models.Model):
+    key = models.CharField(max_length=10)
+    value = models.TextField()

@@ -1,120 +1,117 @@
 {% extends "dashboard/main.html" %}
 {% load static %}
 {% block content %}
-<div class="page-wrapper">
-    <div class="content">
-        <div class="page-header">
-            <div class="page-title">
-                <h4>Template List</h4>
-                <h6>Manage your Templates</h6>
-            </div>
-            <div class="page-btn">
-                <a href="{% url 'add_template_view' %}" class="btn btn-added"><img
-                        src=" {% static 'assets/img/icons/plus.svg' %} " alt="img" class="me-1">Add New Template</a>
-            </div>
-        </div>
-
-
-        <!-- /product list -->
-        <div class="card">
-            <div class="card-body">
-                <div class="table-top">
-                    <div class="search-set">
-                        <div class="search-input">
-                            <a class="btn btn-searchset"><img src=" {% static 'assets/img/icons/search-white.svg' %} "
-                                    alt="img"></a>
-                        </div>
-                    </div>
-                    <div class="wordset">
-                        <ul>
-                            <li>
-                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img
-                                        src=" {% static 'assets/img/icons/pdf.svg' %} " alt="img"></a>
-                            </li>
-                            <li>
-                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img
-                                        src=" {% static 'assets/img/icons/excel.svg' %} " alt="img"></a>
-                            </li>
-                            <li>
-                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img
-                                        src=" {% static 'assets/img/icons/printer.svg' %} " alt="img"></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table datanew">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <label class="checkboxs">
-                                        <input type="checkbox" id="select-all">
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </th>
-                                <th>Template Name</th>
-                                <th>Visibitlity</th>
-                                <th>Created By</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for template in templates %}
-                            <tr>
-                                <td>
-                                    <label class="checkboxs">
-                                        <input type="checkbox">
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </td>
-                                <td>{{ template.name }}</td>
-                                {% if template.visibility %}
-                                <td>Public</td>
-                                {% else %}
-                                <td>Private</td>
-                                {% endif %}
-                                <td>{{ template.created_by }}</td>
-                                <td>
-                                    <a class="me-3" href="{% url 'update_template' template.id %}">
-                                        <img src=" {% static 'assets/img/icons/edit.svg' %} " alt="img">
-                                    </a>
-                                    <a class="confirm-text" href="{% url 'delete_template' template.id %}">
-                                        <img src=" {% static 'assets/img/icons/delete.svg' %} " alt="img">
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                            {% for template in public_templates %}
-                            <tr>
-                                <td>
-                                    <label class="checkboxs">
-                                        <input type="checkbox">
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </td>
-                                <td>{{ template.name }}</td>
-                                {% if template.visibility %}
-                                <td>Public</td>
-                                {% else %}
-                                <td>Private</td>
-                                {% endif %}
-                                <td>{{ template.created_by }}</td>
-                                <td>
-                                    <a class="me-3" href="{% url 'update_template' template.id %}">
-                                        <img src=" {% static 'assets/img/icons/edit.svg' %} " alt="img">
-                                    </a>
-                                    <a class="confirm-text" href="{% url 'delete_template' template.id %}">
-                                        <img src=" {% static 'assets/img/icons/delete.svg' %} " alt="img">
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <!-- /product list -->
+<div class="page-header">
+    <div class="page-title">
+        <h4>Template List</h4>
+        <h6>Manage your Templates</h6>
+    </div>
+    <div class="page-btn">
+        <a href="{% url 'add_template_view' %}" class="btn btn-added"><img
+                src=" {% static 'assets/img/icons/plus.svg' %} " alt="img" class="me-1">Add New Template</a>
     </div>
 </div>
+
+
+<!-- /product list -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-top">
+            <div class="search-set">
+                <div class="search-input">
+                    <a class="btn btn-searchset"><img src=" {% static 'assets/img/icons/search-white.svg' %} "
+                            alt="img"></a>
+                </div>
+            </div>
+            <div class="wordset">
+                <ul>
+                    <li>
+                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img
+                                src=" {% static 'assets/img/icons/pdf.svg' %} " alt="img"></a>
+                    </li>
+                    <li>
+                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img
+                                src=" {% static 'assets/img/icons/excel.svg' %} " alt="img"></a>
+                    </li>
+                    <li>
+                        <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img
+                                src=" {% static 'assets/img/icons/printer.svg' %} " alt="img"></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table  datanew">
+                <thead>
+                    <tr>
+                        <th>
+                            <label class="checkboxs">
+                                <input type="checkbox" id="select-all">
+                                <span class="checkmarks"></span>
+                            </label>
+                        </th>
+                        <th>Template Name</th>
+                        <th>Visibitlity</th>
+                        <th>Created By</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for template in templates %}
+                    <tr>
+                        <td>
+                            <label class="checkboxs">
+                                <input type="checkbox">
+                                <span class="checkmarks"></span>
+                            </label>
+                        </td>
+                        <td>{{ template.name }}</td>
+                        {% if template.visibility %}
+                        <td>Public</td>
+                        {% else %}
+                        <td>Private</td>
+                        {% endif %}
+                        <td>{{ template.created_by }}</td>
+                        <td>
+                            <a class="me-3" href="{% url 'update_template' template.id %}">
+                                <img src=" {% static 'assets/img/icons/edit.svg' %} " alt="img">
+                            </a>
+                            <a class="confirm-text" href="{% url 'delete_template' template.id %}">
+                                <img src=" {% static 'assets/img/icons/delete.svg' %} " alt="img">
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% for template in public_templates %}
+                    <tr>
+                        <td>
+                            <label class="checkboxs">
+                                <input type="checkbox">
+                                <span class="checkmarks"></span>
+                            </label>
+                        </td>
+                        <td>{{ template.name }}</td>
+                        {% if template.visibility %}
+                        <td>Public</td>
+                        {% else %}
+                        <td>Private</td>
+                        {% endif %}
+                        <td>{{ template.created_by }}</td>
+                        <td>
+                            <a class="me-3" href="{% url 'update_template' template.id %}">
+                                <img src=" {% static 'assets/img/icons/edit.svg' %} " alt="img">
+                            </a>
+                            <a class="confirm-text" href="{% url 'delete_template' template.id %}">
+                                <img src=" {% static 'assets/img/icons/delete.svg' %} " alt="img">
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- /product list -->
+
 {% endblock %}

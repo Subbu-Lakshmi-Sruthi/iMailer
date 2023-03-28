@@ -9,4 +9,4 @@ class TemplateForm(forms.ModelForm):
 class MailForm(forms.ModelForm):
     class Meta:
         model = Mail
-        exclude = ("created_by",)
+        exclude = ("created_by","mail_from")

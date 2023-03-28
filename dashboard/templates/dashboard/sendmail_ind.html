@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <style>
-    .no_button{
+    .no_button {
         background: none;
         border: none;
     }
@@ -41,91 +41,73 @@
                                                     alt="img"></a>
                                         </div>
                                     </div>
-                                    <div class="wordset">
-                                        <ul>
-                                            <li>
-                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img
-                                                        src=" {% static 'assets/img/icons/pdf.svg' %} " alt="img"></a>
-                                            </li>
-                                            <li>
-                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img
-                                                        src=" {% static 'assets/img/icons/excel.svg' %} " alt="img"></a>
-                                            </li>
-                                            <li>
-                                                <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img
-                                                        src=" {% static 'assets/img/icons/printer.svg' %} " alt="img"></a>
-                                            </li>
-                                        </ul>
+                                    <div class="modal-body">
+                                        <p id="modal_content"></p>
                                     </div>
-                                </div>
-                                <div class="modal fade" id="myModal" role="dialog">
-                                    <div class="modal-dialog modal-lg">
-                                      <div class="modal-content">
-                                        <div class="modal-header">
-                                          <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
-                                          <h4 class="modal-title">Preview</h4>
-                                        </div>
-                                        <div class="modal-body">
-                                          <p id="modal_content"></p>
-                                        </div>
-                                      </div>
-                                    </div>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table  datanew">
-                                        <thead>
-                                            <tr>
-                                                <th>Template Name</th>
-                                                <th>Visibitlity</th>
-                                                <th>Created By</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for template in templates %}
-                                            <tr>
-                                                <td>{{ template.name }}</td>
-                                                {% if template.visibility %}
-                                                <td>Public</td>
-                                                {% else %}
-                                                <td>Private</td>
-                                                {% endif %}
-                                                <td>{{ template.created_by }}</td>
-                                                <td>
-                                                    <div style="display: none;" id="content_{{template.id}}">
-                                                        {{ template.body|safe }}
-                                                    </div>
-                                                    <a class="me-3" onclick="template_populate('{{ template.id }}')">
-                                                        <img src=" {% static 'assets/img/icons/use_this.png' %} " alt="img" style="width: 20px">
-                                                    </a>
-                                                    <button type="button" class="no_button" data-bs-toggle="modal" data-bs-target="#myModal" onclick="content_populate('{{ template.id }}')"><img src=" {% static 'assets/img/icons/eye1.svg' %} " alt="img"></button>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                            {% for template in public_templates %}
-                                            <tr>
-                                                <td>{{ template.name }}</td>
-                                                {% if template.visibility %}
-                                                <td>Public</td>
-                                                {% else %}
-                                                <td>Private</td>
-                                                {% endif %}
-                                                <td>{{ template.created_by }}</td>
-                                                <td>
-                                                    <div style="display: none;" id="content_{{template.id}}">
-                                                        {{ template.body|safe }}
-                                                    </div>
-                                                    <a class="me-3" onclick="template_populate('{{ template.id }}')">
-                                                        <img src=" {% static 'assets/img/icons/use_this.png' %} " alt="img" style="width: 20px">
-                                                    </a>
-                                                    <button type="button" class="no_button" data-bs-toggle="modal" data-bs-target="#myModal" onclick="content_populate('{{ template.id }}')"><img src=" {% static 'assets/img/icons/eye1.svg' %} " alt="img"></button>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
                                 </div>
                             </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table  datanew">
+                                <thead>
+                                    <tr>
+                                        <th>Template Name</th>
+                                        <th>Visibitlity</th>
+                                        <th>Created By</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for template in templates %}
+                                    <tr>
+                                        <td>{{ template.name }}</td>
+                                        {% if template.visibility %}
+                                        <td>Public</td>
+                                        {% else %}
+                                        <td>Private</td>
+                                        {% endif %}
+                                        <td>{{ template.created_by }}</td>
+                                        <td>
+                                            <div style="display: none;" id="content_{{template.id}}">
+                                                {{ template.body|safe }}
+                                            </div>
+                                            <a class="me-3" onclick="template_populate('{{ template.id }}')">
+                                                <img src=" {% static 'assets/img/icons/use_this.png' %} " alt="img"
+                                                    style="width: 20px">
+                                            </a>
+                                            <button type="button" class="no_button" data-bs-toggle="modal"
+                                                data-bs-target="#myModal"
+                                                onclick="content_populate('{{ template.id }}')"><img
+                                                    src=" {% static 'assets/img/icons/eye1.svg' %} " alt="img"></button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% for template in public_templates %}
+                                    <tr>
+                                        <td>{{ template.name }}</td>
+                                        {% if template.visibility %}
+                                        <td>Public</td>
+                                        {% else %}
+                                        <td>Private</td>
+                                        {% endif %}
+                                        <td>{{ template.created_by }}</td>
+                                        <td>
+                                            <div style="display: none;" id="content_{{template.id}}">
+                                                {{ template.body|safe }}
+                                            </div>
+                                            <a class="me-3" onclick="template_populate('{{ template.id }}')">
+                                                <img src=" {% static 'assets/img/icons/use_this.png' %} " alt="img"
+                                                    style="width: 20px">
+                                            </a>
+                                            <button type="button" class="no_button" data-bs-toggle="modal"
+                                                data-bs-target="#myModal"
+                                                onclick="content_populate('{{ template.id }}')"><img
+                                                    src=" {% static 'assets/img/icons/eye1.svg' %} " alt="img"></button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -133,6 +115,7 @@
         </div>
     </div>
 </div>
+
 <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
 <script>
 function findNumberedSubstrings(str) {
@@ -154,7 +137,7 @@ window.onload = ()=>{
     function content_populate(id){
         document.getElementById("modal_content").innerHTML = document.getElementById(`content_${id}`).innerHTML;
     }
-    function template_populate(id){
+    function template_populate(id) {
         var editor = CKEDITOR.instances['id_content'].setData(document.getElementById(`content_${id}`).innerHTML);
         document.getElementById('compose_btn').click();
     }

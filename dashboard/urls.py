@@ -1,5 +1,6 @@
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
+
 from .views import *
 
 urlpatterns = [
@@ -13,4 +14,5 @@ urlpatterns = [
     path('send_mail/',send_mail,name="send_mail"),
     path('send_mail_bulk/',send_mail_bulk,name="send_mail_bulk"),
     path('logs/',logs,name="logs"),
+    path('get_image/<int:id>/',read_recipient,name="update-read-status")
 ]

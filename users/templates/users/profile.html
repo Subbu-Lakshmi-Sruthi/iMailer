@@ -1,77 +1,73 @@
-
 {% extends "dashboard/main.html" %}
 {% load static %}
 {% block content %}
-<div class="page-wrapper">
-    <div class="content">
-        <div class="page-header">
-            <div class="page-title">
-                <h4>Profile</h4>
-                <h6>User Profile</h6>
-            </div>
-        </div>
-        <!-- /product list -->
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="card">
-                <div class="card-body">
-                    <div class="profile-set">
-                        <div class="profile-head">
+<div class="page-header">
+    <div class="page-title">
+        <h4>Profile</h4>
+        <h6>User Profile</h6>
+    </div>
+</div>
+<!-- /product list -->
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="card">
+        <div class="card-body">
+            <div class="profile-set">
+                <div class="profile-head">
 
-                        </div>
-                        <div class="profile-top">
-                            <div class="profile-content">
-                                <div class="profile-contentimg" style="background: #fff; padding: 25px;">
-                                    {% if request.user.related_profiles.all %}
-                                    <img src="{{ request.user.related_profiles.first.profile_img.url }}" alt="img" id="blah">
-                                    {% else %}
-                                    <img src="{% static 'assets/img/icons/user.png' %}" alt="img" id="blah">
-                                    {% endif %}
-                                    <div class="profileupload">
-                                        <input type="file" id="imgInp" name="profile_pic">
-                                        <a href="javascript:void(0);" style="background: #ddd;" ><img src="{% static 'assets/img/icons/edit-set.svg' %}"  alt="img"></a>
-                                    </div>
-                                </div>
-                                <div class="profile-contentname">
-                                    <h2>{{ request.user.first_name }} {{request.user.last_name }}</h2>
-                                    <h4>Updates Your Photo and Personal Details.</h4>
-                                </div>
+                </div>
+                <div class="profile-top">
+                    <div class="profile-content">
+                        <div class="profile-contentimg" style="background: #fff; padding: 25px;">
+                            {% if request.user.related_profiles.all %}
+                            <img src="{{ request.user.related_profiles.first.profile_img.url }}" alt="img" id="blah">
+                            {% else %}
+                            <img src="{% static 'assets/img/icons/user.png' %}" alt="img" id="blah">
+                            {% endif %}
+                            <div class="profileupload">
+                                <input type="file" id="imgInp" name="profile_pic">
+                                <a href="javascript:void(0);" style="background: #ddd;"><img
+                                        src="{% static 'assets/img/icons/edit-set.svg' %}" alt="img"></a>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-6 col-sm-12">
-                            <div class="form-group">
-                                <label>First Name</label>
-                                <input type="text" value="{{ request.user.first_name }}" name="first_name">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-12">
-                            <div class="form-group">
-                                <label>Last Name</label>
-                                <input type="text" value="{{ request.user.last_name }}" name="last_name">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-12">
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="text" value="{{ request.user.email }}" disabled>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-sm-12">
-                            <div class="form-group">
-                                <label>Phone</label>
-                                <input type="text" value="{{ request.user.related_profiles.first.mobile }}" name="mobile">
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <input type="submit" class="btn btn-submit me-2" value="Save"/>
+                        <div class="profile-contentname">
+                            <h2>{{ request.user.first_name }} {{request.user.last_name }}</h2>
+                            <h4>Updates Your Photo and Personal Details.</h4>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
-        <!-- /product list -->
+            <div class="row">
+                <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" value="{{ request.user.first_name }}" name="first_name">
+                    </div>
+                </div>
+                <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" value="{{ request.user.last_name }}" name="last_name">
+                    </div>
+                </div>
+                <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" value="{{ request.user.email }}" disabled>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-sm-12">
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" value="{{ request.user.related_profiles.first.mobile }}" name="mobile">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <input type="submit" class="btn btn-submit me-2" value="Save" />
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+</form>
+<!-- /product list -->
 {% endblock %}
