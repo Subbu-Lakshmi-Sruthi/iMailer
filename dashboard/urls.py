@@ -13,6 +13,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('send_mail/',send_mail,name="send_mail"),
     path('send_mail_bulk/',send_mail_bulk,name="send_mail_bulk"),
+    path('curiator', ChatbotView , name="curiator"),
     path('logs/',logs,name="logs"),
     path('get_image/<int:id>/',read_recipient,name="update-read-status"),
     path('compose/',compose,name="compose")
