@@ -161,7 +161,7 @@ def send_mail_bulk(request):
     public_templates = Templates.objects.filter(visibility = True).exclude(created_by = request.user.related_profiles.first())
     if request.method == "POST":
         form = MailForm(request.POST)
-        producer = KafkaProducer(bootstrap_servers=['localhost:9092'],value_serializer=lambda x:dumps(x).encode('utf-8'))
+        # producer = KafkaProducer(bootstrap_servers=['localhost:9092'],value_serializer=lambda x:dumps(x).encode('utf-8'))
         if form.is_valid():
             obj = form.save()
             obj.created_by = request.user.related_profiles.first()
@@ -173,10 +173,13 @@ def send_mail_bulk(request):
                 final_json = {}
                 final_json["To"] = recipient_list[str(li)]["email"]
                 final_json["Subject"] = obj.subject
-                
-                final_json["Body"] = obj.content + f'<img src="http://novactf.pythonanywhere.com/get_image/{log.id}/" style="display:none;">'
-                #Queue in Kafka Logic
-                producer.send('go-server-1', value=final_json)
+                content_string = obj.content
+                for i in range(1, int(recipient_list["vars"])+1):
+                    content_string = content_string.replace("{Var"+str(i)+"}", str(recipient_list[str(li)][f"Var{i}"]))
+                final_json["Body"] = content_string + f'<img src="http://novactf.pythonanywhere.com/get_image/{log.id}/" style="display:none;">'
+                print(final_json)
+                # #Queue in Kafka Logic
+                # producer.send('go-server-1', value=final_json)
                 # sleep(5)
                 
     form = MailForm()
