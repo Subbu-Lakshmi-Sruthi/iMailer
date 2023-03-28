@@ -5,7 +5,7 @@ from django.shortcuts import render, HttpResponse , redirect
 from .forms import *
 from .models import *
 from django.contrib import messages
-from .tasks import send_mail_task
+from .tasks import send_mail_task,update_read_status
 import json
 
 # Create your views here.
@@ -118,10 +118,11 @@ def send_mail(request):
             obj = form.save()
             obj.created_by = request.user.related_profiles.first()
             obj.mail_from = "lonelydeveloper2003@gmail.com"
-            send_mail_task.delay(obj.subject,obj.content,request.POST["email_to"],obj.reply_to)
+            log = Log.objects.create(mail = obj, mail_to = request.POST["email_to"], status = 0)
+            obj.content += f'<img src="http://novactf.pythonanywhere.com/get_image/{log.id}/" style="display:none;">'
             obj.save()
+            send_mail_task.delay(obj.subject,obj.content,request.POST["email_to"],obj.reply_to,log.id)
             messages.info(request,"Mail Sent")
-            Log.objects.create(mail = obj, mail_to = request.POST["email_to"], status = 0)
             #Queue in Kafka Logic
             
     form = MailForm()
@@ -144,11 +145,16 @@ def send_mail_bulk(request):
         if form.is_valid():
             obj = form.save()
             obj.created_by = request.user.related_profiles.first()
-            obj.save()
             recipient_list = json.loads(request.POST["recipient_list"])
+            obj.save()
             for li in range(0,recipient_list["length"]):
                 Log.objects.create(mail_to = recipient_list[str(li)]["email"], mail = obj, status = 0)
                 #Queue in Kafka Logic
     form = MailForm()
     return render(request, "dashboard/sendmail_bulk.html",{"send_mail_bulk_active": True, "form":form, 'templates' : templates,
         'public_templates': public_templates,})
+
+def read_recipient(request,id):
+    update_read_status.delay(id)
+    print("heiii")
+    return HttpResponse("ok")
