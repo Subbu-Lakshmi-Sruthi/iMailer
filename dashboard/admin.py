@@ -6,3 +6,4 @@ from . import models
 admin.site.register(models.Templates)
 admin.site.register(models.Mail)
 admin.site.register(models.Log)
+admin.site.register(models.Config)

@@ -30,9 +30,13 @@
 		
 		<!-- Main CSS -->
 		<link rel="stylesheet" href=" {% static 'assets/css/style.css' %} ">
+		<link rel="stylesheet" href="{% static 'assets/plugins/twitter-bootstrap-wizard/form-wizard.css' %}">
 		<style>
 			.submenu{
 				padding: 10px 0px;
+			}
+			body{
+				background-color: #D3D3D4 !important;
 			}
 		</style>
 	</head>
@@ -226,26 +230,26 @@
 					<div id="sidebar-menu" class="sidebar-menu">
 						<ul>
 							<li {% if dashboard_active %} class="active" {% endif %}style="padding: 10px 0px;">
-								<a href="{% url 'dashboard' %}" ><img src=" {% static 'assets/img/icons/dashboard.svg' %} " alt="img"><span> Dashboard</span> </a>
+								<a href="{% url 'dashboard' %}" ><i class="fas fa-chart-line"></i><span> Dashboard</span> </a>
 							</li>
 							<li class="submenu">
-								<a><img src=" {% static 'assets/img/icons/product.svg' %} " alt="img"><span> Manage Templates</span> <span class="menu-arrow"></span></a>
+								<a><i class="fas fa-code"></i><span> Manage Templates</span> <span class="menu-arrow"></span></a>
 								<ul>
 									<li><a href="{% url 'add_template_view' %}" {% if create_template_active %} class="active" {% endif %}>Add Templates</a></li>
 									<li><a href="{% url 'manage_templates' %}" {% if manage_template_active %} class="active" {% endif %}>Manage Templates</a></li>
 								</ul>
 							</li>
 							<li class="submenu">
-								<a><img src=" {% static 'assets/img/icons/sales1.svg' %} " alt="img"><span> Send Mail</span> <span class="menu-arrow"></span></a>
+								<a><i class="fas fa-envelope"></i><span> Send Mail</span> <span class="menu-arrow"></span></a>
 								<ul>
 									<li><a href="{% url 'send_mail' %}"  {% if send_mail_active %} class="active" {% endif %}>Send Individual Mail</a></li>
 									<li><a href="{% url 'send_mail_bulk' %}" {% if send_mail_bulk_active %} class="active" {% endif %}>Send Bulk Mail</a></li>
-									<li><a href="#">View Logs</a></li>
+									<li><a href="{% url 'logs' %}" {% if logs_active %} class="active" {% endif %}>View Logs</a></li>
 									<li><a href="#">View Notification</a></li>
 									<li><a href="{% url 'curiator'%}">Curiator</a></li>
 								</ul>
 							</li>
-							<li class="submenu">
+							<!-- <li class="submenu">
 								<a><img src=" {% static 'assets/img/icons/purchase1.svg' %} " alt="img"><span> Manage Users</span> <span class="menu-arrow"></span></a>
 								<ul>
 									<li><a href="{% url 'manage_user_permission'%}">Manage Permission</a></li>
@@ -264,15 +268,26 @@
 									<li><a href="{% url 'add_group'%}">Create Groups</a></li>
 									<li><a href="{% url 'manage_permission'%}">Manage Permission</a></li>
 								</ul>
-							</li>
+							</li> -->
 						</ul>
 					</div>
 				</div>
 			</div>
 			<!-- /Sidebar -->
-
-			{% block content %}
-			{% endblock %}
+			<div class="page-wrapper">
+				<div class="content">
+					{% if messages %}
+					{% for message in messages %}
+						<div class="alert alert-warning alert-dismissible fade show" role="alert">
+							{{message}}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>
+					{% endfor %}
+					{% endif %}
+					{% block content %}
+					{% endblock %}
+				</div>
+			</div>
 		</div>
 		<!-- /Main Wrapper -->
 		
@@ -298,6 +313,13 @@
 		
 		<!-- Custom JS -->
 		<script src=" {% static 'assets/js/script.js' %} "></script>
-		
+
+		<!-- Mail check JS -->
+		<script src="{% static 'assets/js/mailcheck.min.js' %}"></script>
+		<script src="{% static 'assets/js/jquery.slimscroll.min.js' %}"></script>
+
+		<script src="{% static 'assets/plugins/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js' %}"></script>
+		<script src="{% static 'assets/plugins/twitter-bootstrap-wizard/prettify.js' %}"></script>
+		<script src="{% static 'assets/plugins/twitter-bootstrap-wizard/form-wizard.js' %}"></script>
 	</body>
 </html>

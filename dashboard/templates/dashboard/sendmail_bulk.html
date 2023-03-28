@@ -36,7 +36,7 @@
         background-color: #fcfcfa;
     }
 </style>
-<div class="page-wrapper">
+<div class="page-wrapper" style="margin: 0 0 0 130px !important;">
     <div class="content">
         <div class="card-body">
             <ul class="nav nav-tabs nav-tabs-solid nav-tabs-rounded nav-justified">
@@ -47,17 +47,21 @@
             <div class="tab-content">
                 <div class="tab-pane show active" id="solid-rounded-justified-tab1">
                     <div class="container" style="margin-top: 20px;">
+                        <p>Number of variables</p>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <input type="number" id="no_of_var" class="form-control" name="no_of_var">
+                            </div>
+                        </div>
+                        <br>
                         <p>Import CSV</p>
                         <input type="file" id="fileInput" accept=".csv" onchange="handleFileSelect(event)" class="form-control">
                         <br>
                         <hr class="hr-text" data-content="OR">
                         <p style="text-align: center; position: relative; bottom: 25px;">OR</p>
                         <p>Add Recipient</p>
-                        <div class="row">
-                            <div class="col-md-3"><label for="recipient_name">Name</label><input type="text" name="recipient_name" id="recipient_name" class="form-control"></div>
+                        <div class="row" id="recipient_input">
                             <div class="col-md-3"><label for="recipient_email">Email</label><input type="email" name="recipient_email" id="recipient_email" class="form-control"></div>
-                            <div class="col-md-2"><label for="recipient_age">Age</label><input type="number" name="recipient_age" id="recipient_age" class="form-control"></div>
-                            <div class="col-md-2"><label for="recipient_gender">Gender</label><input type="text" name="recipient_gender" id="recipient_gender" class="form-control"></div>
                             <div class="col-md-2"><br><button class="btn btn-primary" onclick="populate_ind_table()">Add</button></div>
                         </div>
 
@@ -93,10 +97,7 @@
                                     <table class="table datanew" id="tableP">
                                         <thead >
                                             <tr>
-                                                <th>Name</th>
                                                 <th>Email</th>
-                                                <th>Age</th>
-                                                <th>Gender</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
@@ -226,6 +227,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 <script>
     window.onload = ()=>{
+        document.getElementById("no_of_var").oninput = ()=>{
+            t = $("#tableP").DataTable();
+            var tr = "<tr><th>Email</th>"
+            for(var i = 1; i <= document.getElementById("no_of_var").value; i++){
+                tr+=`<th>Var${i}</th>`;
+            }
+            tr+=`<th>Actions</th></tr>`
+            document.querySelector("#tableP thead").innerHTML = tr;
+            var div = `<div class="col-md-3"><label for="recipient_email">Email</label><input type="email" name="recipient_email" id="recipient_email" class="form-control"></div>`
+            for(var i = 1; i <= document.getElementById("no_of_var").value; i++){
+                div+=`<div class="col-md-3"><label for="Var${i}">Var${i}</label><input type="text" name="Var${i}" id="Var${i}" class="form-control"></div>` 
+            }
+            div+=`<div class="col-md-2"><br><button class="btn btn-primary" onclick="populate_ind_table()">Add</button></div>`
+            document.getElementById("recipient_input").innerHTML = div;
+            t.destroy();
+            t = $("#tableP").DataTable();
+        }
         document.getElementById("mail_form").onsubmit = (e)=>{
             var final_json = {}
             e.preventDefault();
@@ -233,10 +251,10 @@
             final_json["length"] = t.rows().data().length; 
             var item = {}
             for(var i = 0; i<t.rows().data().length; i++){
-                item["name"] = t.rows().data()[i][0];
-                item["email"] = t.rows().data()[i][1];
-                item["age"] = t.rows().data()[i][2];
-                item["gender"] = t.rows().data()[i][3];
+                item["email"] = t.rows().data()[i][0];
+                for(var j = 1; j <= document.getElementById("no_of_var").value; j++){
+                    item[`Var${j}`] = t.rows().data()[i][j];
+                }
                 final_json[i] = item
                 item = {}
             }
@@ -253,20 +271,19 @@
     }
     var id = 0;
     function populate_ind_table(){
-        var name = document.getElementById("recipient_name");
+        t = $("#tableP").DataTable();
         var email = document.getElementById("recipient_email");
-        var age = document.getElementById("recipient_age");
-        var gender = document.getElementById("recipient_gender");
-        var arr = [name.value, email.value, age.value, gender.value, `<a class="confirm-text">
-                                        <img src=" {% static 'assets/img/icons/delete.svg' %} " alt="img" class="icon-delete">
-                                    </a>`];
-        var t = $("#tableP").DataTable();
+        var arr = []
+        arr.push(email.value)
+        email.value = "";
+        for(var i = 1; i <= document.getElementById("no_of_var").value; i++){
+            arr.push(document.getElementById(`Var${i}`).value)
+            document.getElementById(`Var${i}`).value = "";
+        }
+        arr.push(`<a class="confirm-text"><img src=" {% static 'assets/img/icons/delete.svg' %} " alt="img" class="icon-delete"></a>`)
+        console.log("its here down below")
         id += 1;
         var rowNode = t.row.add(arr).draw(false);
-        name.value = "";
-        email.value = "";
-        age.value = "";
-        gender.value = "";
     }
     $('#tableP tbody').on( 'click', 'img.icon-delete', function () {
         var t = $("#tableP").DataTable();
@@ -285,14 +302,18 @@
                 var headers = Object.keys(results.data[0]);
                 results.data.forEach(function(row) {
                     var arr = [];
+                    var tr = "<tr>";
                     headers.forEach(function(header) {
-                        arr.push(row[header]);
+                        if (row[header] == NULL){
+                            var flag = 1;
+                        }
+                        tr+=`<td>${row[header]}</td>`
                     });
-                    arr.push(`<a class="confirm-text">
+                    if(flag != 1){
+                        tr += `<td><a class="confirm-text">
                                         <img src=" {% static 'assets/img/icons/delete.svg' %} " alt="img" class="icon-delete">
-                                    </a>`)
-                    if (arr[0] != null){
-                        t.row.add(arr).draw(false);
+                                    </a></td></tr>`
+                        document.querySelector("#tableP tbody").innerHTML += tr;
                     }
                 });
             }

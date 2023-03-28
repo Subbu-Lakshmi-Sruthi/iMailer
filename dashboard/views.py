@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import render, HttpResponse , redirect
 from .forms import *
 from .models import *
+from django.contrib import messages
+from .tasks import send_mail_task,update_read_status
 import json
 import openai
 
@@ -120,12 +122,22 @@ def send_mail(request):
         if form.is_valid():
             obj = form.save()
             obj.created_by = request.user.related_profiles.first()
+            obj.mail_from = "lonelydeveloper2003@gmail.com"
+            log = Log.objects.create(mail = obj, mail_to = request.POST["email_to"], status = 0)
+            obj.content += f'<img src="http://novactf.pythonanywhere.com/get_image/{log.id}/" style="display:none;">'
             obj.save()
             Log.objects.create(mail = obj, mail_to = request.POST["email_to"], status = 0)
-            #Queue in Kafka Logic
+            send_mail_task.delay(obj.subject,obj.content,request.POST["email_to"],obj.reply_to,log.id)
+            messages.info(request,"Mail Sent")
     form = MailForm()
+    obj = Log.objects.all().first()
     return render(request, "dashboard/sendmail_ind.html", {"send_mail_active":True, "form":form, 'templates' : templates,
-        'public_templates': public_templates,})
+        'public_templates': public_templates,"obj":obj})
+
+from time import sleep
+from kafka import KafkaProducer
+from json import dumps
+
 
 @login_required(login_url='/login')
 @init_check
@@ -140,16 +152,50 @@ def send_mail_bulk(request):
     public_templates = Templates.objects.filter(visibility = True).exclude(created_by = request.user.related_profiles.first())
     if request.method == "POST":
         form = MailForm(request.POST)
+        # producer = KafkaProducer(bootstrap_servers=['localhost:9092'],
+        #                  value_serializer=lambda x:
+        #                  dumps(x).encode('utf-8'))
         if form.is_valid():
             obj = form.save()
             obj.created_by = request.user.related_profiles.first()
-            obj.save()
             recipient_list = json.loads(request.POST["recipient_list"])
+            obj.save()
             for li in range(0,recipient_list["length"]):
                 Log.objects.create(mail_to = recipient_list[str(li)]["email"], mail = obj, status = 0)
+                final_json = {}
+                final_json["To"] = recipient_list[str(li)]["email"]
+                final_json["Subject"] = obj.subject
+                final_json["Body"] = obj.content
+                print(final_json)
                 #Queue in Kafka Logic
+                # producer.send('go-server-1', value=final_json)
+                # sleep(5)
+                
     form = MailForm()
-    return render(request, "dashboard/sendmail_bulk.html",{"send_mail_bulk_active": True, "form":form, 'templates' : templates,
+    return render(request, "dashboard/compose.html",{"send_mail_bulk_active": True, "form":form, 'templates' : templates,
+        'public_templates': public_templates,})
+
+@login_required(login_url='/login')
+@init_check
+def logs(request):
+    logs = Log.objects.filter(mail__created_by = request.user.related_profiles.first())
+    return render(request, "dashboard/logs.html",{"logs_active":True, "logs":logs})
+
+from .tasks import send_mail_task,update_read_status
+
+def read_recipient(request,id):
+    update_read_status.delay(id)
+    print("heiii")
+    return HttpResponse("ok")
+
+@login_required(login_url='/login')
+@init_check
+def compose(request):
+    form = MailForm()
+    templates = Templates.objects.filter(created_by = request.user.related_profiles.first())
+    public_templates = Templates.objects.filter(visibility = True).exclude(created_by = request.user.related_profiles.first())
+    
+    return render(request, "dashboard/compose.html", {"send_mail_bulk_active": True, "form":form, 'templates' : templates,
         'public_templates': public_templates,})
 
 
