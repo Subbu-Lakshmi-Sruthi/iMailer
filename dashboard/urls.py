@@ -16,5 +16,7 @@ urlpatterns = [
     path('curiator', ChatbotView , name="curiator"),
     path('logs/',logs,name="logs"),
     path('get_image/<int:id>/',read_recipient,name="update-read-status"),
-    path('compose/',compose,name="compose")
+    path('compose/',compose,name="compose"),
+    path('curiate-content/' , curiate_content , name="curiate_content" )
+
 ]
