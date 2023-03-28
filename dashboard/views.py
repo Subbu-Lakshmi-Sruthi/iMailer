@@ -129,6 +129,11 @@ def send_mail(request):
     return render(request, "dashboard/sendmail_ind.html", {"send_mail_active":True, "form":form, 'templates' : templates,
         'public_templates': public_templates,"obj":obj})
 
+from time import sleep
+from kafka import KafkaProducer
+from json import dumps
+
+
 @login_required(login_url='/login')
 @init_check
 def send_mail_bulk(request):
@@ -142,6 +147,9 @@ def send_mail_bulk(request):
     public_templates = Templates.objects.filter(visibility = True).exclude(created_by = request.user.related_profiles.first())
     if request.method == "POST":
         form = MailForm(request.POST)
+        # producer = KafkaProducer(bootstrap_servers=['localhost:9092'],
+        #                  value_serializer=lambda x:
+        #                  dumps(x).encode('utf-8'))
         if form.is_valid():
             obj = form.save()
             obj.created_by = request.user.related_profiles.first()
@@ -149,15 +157,17 @@ def send_mail_bulk(request):
             obj.save()
             for li in range(0,recipient_list["length"]):
                 Log.objects.create(mail_to = recipient_list[str(li)]["email"], mail = obj, status = 0)
-                #Queue in Kafka Logic
                 final_json = {}
-                body = []
-                final_json["to"]  = request.POST["email_to"]
-                final_json["subject"] = obj.subject
-                content = obj.content
+                final_json["To"] = recipient_list[str(li)]["email"]
+                final_json["Subject"] = obj.subject
+                final_json["Body"] = obj.content
+                print(final_json)
+                #Queue in Kafka Logic
+                # producer.send('go-server-1', value=final_json)
+                # sleep(5)
                 
     form = MailForm()
-    return render(request, "dashboard/sendmail_bulk.html",{"send_mail_bulk_active": True, "form":form, 'templates' : templates,
+    return render(request, "dashboard/compose.html",{"send_mail_bulk_active": True, "form":form, 'templates' : templates,
         'public_templates': public_templates,})
 
 @login_required(login_url='/login')
@@ -179,5 +189,6 @@ def compose(request):
     form = MailForm()
     templates = Templates.objects.filter(created_by = request.user.related_profiles.first())
     public_templates = Templates.objects.filter(visibility = True).exclude(created_by = request.user.related_profiles.first())
+    
     return render(request, "dashboard/compose.html", {"send_mail_bulk_active": True, "form":form, 'templates' : templates,
         'public_templates': public_templates,})
