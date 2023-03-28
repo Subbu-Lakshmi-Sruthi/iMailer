@@ -1,0 +1,29 @@
+{% extends "dashboard/main.html" %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content">
+        <h1>Curiator</h1>
+
+        <form method='post'>
+        {% csrf_token %}
+        <label for="user_input" >Enter what you are looking for :</label>
+        <input type='text' name='user_input' class="form-control mt-2 " />
+        <button type='submit' class="btn btn-primary mt-2">Find</button>
+        </form>
+
+        {% if response %}
+        <div class="mt-4">
+        <hr>
+        </div>
+        <div class="p-1">
+        <h2>Curiator response:</h2>
+        <p class="p-4">{{ response }}</p>
+        </div>
+        {% endif %}
+</div>
+</div>
+{% endblock %}
+
+<label for="email_to">To* </label>
+                            <input type="email" name="email_to" id="email_to" class="form-control">
