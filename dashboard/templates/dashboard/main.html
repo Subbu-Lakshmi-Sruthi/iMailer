@@ -35,9 +35,6 @@
 			.submenu{
 				padding: 10px 0px;
 			}
-			body{
-				background-color: #D3D3D4 !important;
-			}
 		</style>
 	</head>
 	<body>
@@ -246,6 +243,7 @@
 									<li><a href="{% url 'send_mail_bulk' %}" {% if send_mail_bulk_active %} class="active" {% endif %}>Send Bulk Mail</a></li>
 									<li><a href="{% url 'logs' %}" {% if logs_active %} class="active" {% endif %}>View Logs</a></li>
 									<li><a href="#">View Notification</a></li>
+									<li><a href="{% url 'curiator'%}">Curiator</a></li>
 								</ul>
 							</li>
 							<!-- <li class="submenu">

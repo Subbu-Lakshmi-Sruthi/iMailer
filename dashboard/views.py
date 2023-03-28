@@ -7,6 +7,11 @@ from .models import *
 from django.contrib import messages
 from .tasks import send_mail_task,update_read_status
 import json
+import openai
+
+
+
+
 
 # Create your views here.
 @login_required(login_url="login")
@@ -200,3 +205,27 @@ def compose(request):
     
     return render(request, "dashboard/compose.html", {"send_mail_bulk_active": True, "form":form, 'templates' : templates,
         'public_templates': public_templates,})
+
+
+openai.api_key = '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'
+
+def chatbot_response(user_input):
+# Generate a response from GPT-3
+    response = openai.Completion.create(
+        engine='text-davinci-002',
+        prompt=user_input,
+        temperature=0.5,
+        max_tokens=1024,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    return response['choices'][0]['text']
+    
+def ChatbotView(request):
+    if request.method == "POST":
+        user_input = request.POST['user_input']
+        response = chatbot_response(user_input)
+        return render(request , 'dashboard/curiator.html' , {'response' : response})
+    
+    return render(request , 'dashboard/curiator.html')
