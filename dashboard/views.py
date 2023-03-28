@@ -117,10 +117,11 @@ def send_mail(request):
             obj.created_by = request.user.related_profiles.first()
             obj.save()
             Log.objects.create(mail = obj, mail_to = request.POST["email_to"], status = 0)
-            #Queue in Kafka Logic
+            #Queue in Kafka Logic to, body, subject, variables
     form = MailForm()
+    obj = Log.objects.all().first()
     return render(request, "dashboard/sendmail_ind.html", {"send_mail_active":True, "form":form, 'templates' : templates,
-        'public_templates': public_templates,})
+        'public_templates': public_templates,"obj":obj})
 
 @login_required(login_url='/login')
 @init_check
@@ -143,6 +144,12 @@ def send_mail_bulk(request):
             for li in range(0,recipient_list["length"]):
                 Log.objects.create(mail_to = recipient_list[str(li)]["email"], mail = obj, status = 0)
                 #Queue in Kafka Logic
+                final_json = {}
+                body = []
+                final_json["to"]  = request.POST["email_to"]
+                final_json["subject"] = obj.subject
+                content = obj.content
+                
     form = MailForm()
     return render(request, "dashboard/sendmail_bulk.html",{"send_mail_bulk_active": True, "form":form, 'templates' : templates,
         'public_templates': public_templates,})

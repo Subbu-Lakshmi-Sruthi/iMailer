@@ -9,7 +9,7 @@
     }
 </style>
 <div class="page-wrapper">
-    <div class="content">
+    <div class="content" style="margin: 20px 100px;">
         <div class="card-body">
             <ul class="nav nav-tabs nav-tabs-solid nav-tabs-rounded nav-justified">
                 <li class="nav-item"><a class="nav-link active" href="#solid-rounded-justified-tab1" data-bs-toggle="tab" style="color: #222;" id="compose_btn">Compose</a></li>
@@ -18,8 +18,9 @@
             <div class="tab-content">
                 <div class="tab-pane show active" id="solid-rounded-justified-tab1">
                     <div class="container" style="margin-top: 20px;">
-                        <form method="post" style="width: 75%;">
+                        <form method="post" style="width: 75%;" id="mail_form">
                             {% csrf_token %}
+                            <input type="hidden" name="variables" id="variables">
                             <label for="email_to">To* </label>
                             <input type="email" name="email_to" id="email_to" class="form-control">
                             <br>
@@ -134,6 +135,22 @@
 </div>
 <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
 <script>
+function findNumberedSubstrings(str) {
+  const regex = /\{\{\s*(\d+)\s*\}\}/g;
+  const matches = [];
+  let match;
+  
+  while ((match = regex.exec(str)) !== null) {
+    matches.push(match.index);
+  }
+  
+  return matches;
+}
+window.onload = ()=>{
+    CKEDITOR.instances["id_content"].on('change', function() { 
+    console.log("TEST");
+});
+}
     function content_populate(id){
         document.getElementById("modal_content").innerHTML = document.getElementById(`content_${id}`).innerHTML;
     }
