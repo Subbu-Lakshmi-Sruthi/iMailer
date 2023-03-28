@@ -41,7 +41,7 @@
         }
     }
 </style>
-<div class="page-wrapper cardhead" style="margin: 0 15% !important; padding: 30px 0 0 !important;" id="content_wrap">
+<div class="page-wrapper cardhead" style="margin: 0 5% !important; padding: 30px 0 0 !important;" id="content_wrap">
                 
     <div class="content container-fluid">
         <div class="row">
@@ -95,8 +95,9 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <p>Import CSV</p>
-                                        <a disabled>Download Sample File</a>
+                                        <p style="margin-bottom: 0px;">Import CSV</p>
+                                        <a href="{% static 'sample.csv' %}" download="sample.csv">Download Sample File</a>
+                                        <br><br><br>
                                         <input type="file" id="fileInput" accept=".csv" onchange="handleFileSelect(event)" class="form-control">
                                         <br>
                                         <hr class="hr-text" data-content="OR">
@@ -380,8 +381,13 @@
                 var headers = Object.keys(results.data[0]);
                 results.data.forEach(function(row) {
                     var arr = [];
+                    var count = 0;
                     headers.forEach(function(header) {
-                        arr.push(row[header]);
+                        if(count <= document.getElementById("no_of_var").value){
+                            arr.push(row[header]);
+                        }
+                        console.log(row[header])
+                        count++;
                     });
                     arr.push(`<a class="confirm-text">
                                         <img src=" {% static 'assets/img/icons/delete.svg' %} " alt="img" class="icon-delete">
