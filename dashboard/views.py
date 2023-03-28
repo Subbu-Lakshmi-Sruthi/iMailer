@@ -105,6 +105,11 @@ def delete_template(request , id):
     template.delete()
     return redirect('manage_templates')
 
+
+
+from time import sleep
+from kafka import KafkaProducer
+from json import dumps
 @login_required(login_url='/login')
 @init_check
 def send_mail(request):
@@ -127,16 +132,20 @@ def send_mail(request):
             obj.content += f'<img src="http://novactf.pythonanywhere.com/get_image/{log.id}/" style="display:none;">'
             obj.save()
             Log.objects.create(mail = obj, mail_to = request.POST["email_to"], status = 0)
-            send_mail_task.delay(obj.subject,obj.content,request.POST["email_to"],obj.reply_to,log.id)
+            # send_mail_task.delay(obj.subject,obj.content,request.POST["email_to"],obj.reply_to,log.id)
+            producer = KafkaProducer(bootstrap_servers=['localhost:9092'],value_serializer=lambda x:dumps(x).encode('utf-8'))
+            final_json = {}
+            final_json['To'] = request.POST["email_to"]
+            final_json['Subject'] = obj.subject
+            final_json['Body'] = obj.content
+            # final_json = json.dumps(final_json)
+            producer.send('go-server-1', value=final_json)
             messages.info(request,"Mail Sent")
     form = MailForm()
     obj = Log.objects.all().first()
     return render(request, "dashboard/sendmail_ind.html", {"send_mail_active":True, "form":form, 'templates' : templates,
         'public_templates': public_templates,"obj":obj})
 
-from time import sleep
-from kafka import KafkaProducer
-from json import dumps
 
 
 @login_required(login_url='/login')
@@ -152,23 +161,22 @@ def send_mail_bulk(request):
     public_templates = Templates.objects.filter(visibility = True).exclude(created_by = request.user.related_profiles.first())
     if request.method == "POST":
         form = MailForm(request.POST)
-        # producer = KafkaProducer(bootstrap_servers=['localhost:9092'],
-        #                  value_serializer=lambda x:
-        #                  dumps(x).encode('utf-8'))
+        producer = KafkaProducer(bootstrap_servers=['localhost:9092'],value_serializer=lambda x:dumps(x).encode('utf-8'))
         if form.is_valid():
             obj = form.save()
             obj.created_by = request.user.related_profiles.first()
+            obj.mail_from = "lonelydeveloper2003@gmail.com"
             recipient_list = json.loads(request.POST["recipient_list"])
             obj.save()
             for li in range(0,recipient_list["length"]):
-                Log.objects.create(mail_to = recipient_list[str(li)]["email"], mail = obj, status = 0)
+                log = Log.objects.create(mail_to = recipient_list[str(li)]["email"], mail = obj, status = 0)
                 final_json = {}
                 final_json["To"] = recipient_list[str(li)]["email"]
                 final_json["Subject"] = obj.subject
-                final_json["Body"] = obj.content
-                print(final_json)
+                
+                final_json["Body"] = obj.content + f'<img src="http://novactf.pythonanywhere.com/get_image/{log.id}/" style="display:none;">'
                 #Queue in Kafka Logic
-                # producer.send('go-server-1', value=final_json)
+                producer.send('go-server-1', value=final_json)
                 # sleep(5)
                 
     form = MailForm()
