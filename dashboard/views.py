@@ -185,7 +185,6 @@ from .tasks import send_mail_task,update_read_status
 
 def read_recipient(request,id):
     update_read_status.delay(id)
-    print("heiii")
     return HttpResponse("ok")
 
 @login_required(login_url='/login')
@@ -221,3 +220,7 @@ def ChatbotView(request):
         return render(request , 'dashboard/curiator.html' , {'response' : response})
     
     return render(request , 'dashboard/curiator.html')
+
+def unsubscribe_mail_list(request, email):
+    Unsubscribe.objects.create(email = email)
+    return HttpResponse("OK")

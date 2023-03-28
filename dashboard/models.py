@@ -33,3 +33,7 @@ class Templates(models.Model):
 class Config(models.Model):
     key = models.CharField(max_length=10)
     value = models.TextField()
+
+class Unsubscribe(models.Model):
+    email = models.EmailField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
