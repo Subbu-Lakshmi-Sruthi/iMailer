@@ -8,9 +8,11 @@ from django.contrib import messages
 from .tasks import send_mail_task,update_read_status
 import json
 import openai
-
-
-
+from time import sleep
+from kafka import KafkaProducer
+from json import dumps
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -134,11 +136,6 @@ def send_mail(request):
     return render(request, "dashboard/sendmail_ind.html", {"send_mail_active":True, "form":form, 'templates' : templates,
         'public_templates': public_templates,"obj":obj})
 
-from time import sleep
-from kafka import KafkaProducer
-from json import dumps
-
-
 @login_required(login_url='/login')
 @init_check
 def send_mail_bulk(request):
@@ -219,5 +216,14 @@ def ChatbotView(request):
         user_input = request.POST['user_input']
         response = chatbot_response(user_input)
         return render(request , 'dashboard/curiator.html' , {'response' : response})
+    
+    return render(request , 'dashboard/curiator.html')
+
+@csrf_exempt
+def curiate_content(request):
+    if request.method == "POST":
+        user_input = json.loads(request.body)
+        response = chatbot_response(user_input)
+        return JsonResponse({'response' : response.replace("\n" ,"<br/>" ) })
     
     return render(request , 'dashboard/curiator.html')
