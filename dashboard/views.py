@@ -151,6 +151,7 @@ def send_mail(request):
 @login_required(login_url='/login')
 @init_check
 def send_mail_bulk(request):
+    message1 = ""
     curr_user = request.user
     curr_user_group= curr_user.groups.all()
     curr_user_permissions = Access.objects.get(group = curr_user_group[0].id)
@@ -178,13 +179,14 @@ def send_mail_bulk(request):
                     content_string = content_string.replace("{Var"+str(i)+"}", str(recipient_list[str(li)][f"Var{i}"]))
                 final_json["Body"] = content_string + f'<img src="http://novactf.pythonanywhere.com/get_image/{log.id}/" style="display:none;">'
                 print(final_json)
+                message1 = "Mail sent successfully"
                 # #Queue in Kafka Logic
                 # producer.send('go-server-1', value=final_json)
                 # sleep(5)
                 
     form = MailForm()
     return render(request, "dashboard/compose.html",{"send_mail_bulk_active": True, "form":form, 'templates' : templates,
-        'public_templates': public_templates,})
+        'public_templates': public_templates,"message1":message1})
 
 @login_required(login_url='/login')
 @init_check

@@ -302,7 +302,20 @@
 </div>
 <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+
+        <!-- Sweetalert 2 -->
+		<script src="{% static 'assets/plugins/sweetalert/sweetalert2.all.min.js' %}"></script>
+		<script src="{% static 'assets/plugins/sweetalert/sweetalerts.min.js' %}"></script>
+        
 <script>
+    "{% if message1 %}"
+    Swal.fire({
+                    title: 'Mail Sent successfully',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                })
+    "{% endif %}"
      window.onload = ()=>{
         document.getElementById("no_of_var").oninput = ()=>{
             t = $("#tableP").DataTable();
@@ -325,20 +338,32 @@
             var final_json = {}
             e.preventDefault();
             var t = $("#tableP").DataTable();
-            final_json["length"] = t.rows().data().length; 
-            final_json["vars"] = document.getElementById("no_of_var").value;
-            var item = {}
-            for(var i = 0; i<t.rows().data().length; i++){
-                item["email"] = t.rows().data()[i][0];
-                for(var j = 1; j <= document.getElementById("no_of_var").value; j++){
-                    item[`Var${j}`] = t.rows().data()[i][j];
+            Swal.fire({
+                    title: 'Are you sure?',
+                    html: `${t.rows().data().length} mails`,
+                    showDenyButton: true,
+                    icon: 'question',
+                    confirmButtonText: 'Proceed',
+                    denyButtonText: 'Back',
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        final_json["length"] = t.rows().data().length; 
+                final_json["vars"] = document.getElementById("no_of_var").value;
+                var item = {}
+                for(var i = 0; i<t.rows().data().length; i++){
+                    item["email"] = t.rows().data()[i][0];
+                    for(var j = 1; j <= document.getElementById("no_of_var").value; j++){
+                        item[`Var${j}`] = t.rows().data()[i][j];
+                    }
+                    final_json[i] = item
+                    item = {}
                 }
-                final_json[i] = item
-                item = {}
-            }
-            document.getElementById("recipient_list").value = JSON.stringify(final_json);
-            console.log(document.getElementById("recipient_list").value);
-            document.getElementById("mail_form").submit();
+                document.getElementById("recipient_list").value = JSON.stringify(final_json);
+                console.log(document.getElementById("recipient_list").value);
+                document.getElementById("mail_form").submit();
+                    }
+                })
         }
     }
     function content_populate(id){
